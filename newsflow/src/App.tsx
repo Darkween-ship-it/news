@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { getTopHeadlines } from "./services/newsApi";
-import type {newsArticle} from "./types/news";
+import type { NewsArticle } from "./types/news";
+import NewsGrid from "./components/NewsGrid";
+import "./App.css";
 
 function App() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(" ");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function loadNews() {
       try {
         const news = await getTopHeadlines();
         setArticles(news);
-      }catch (err) {
-        setError("Failed to fetch news");
+      } catch (err) {
         console.error(err);
-      }finally {
+        setError("Could not load the latest news.");
+      } finally {
         setLoading(false);
       }
     }
@@ -24,34 +26,60 @@ function App() {
   }, []);
 
   if (loading) {
-    return <h1>Loading latest news...</h1>
+    return <div className="status">Loading latest news...</div>;
   }
 
-  if(error) {
-    return <h1>{error}</h1>;
+  if (error) {
+    return <div className="status error">{error}</div>;
   }
 
   return (
-    <main>
-      <h1>NEWSFLOW</h1>
+    <div className="app">
 
-      {articles.map((article, index) => (
-        <article key={`${article.url}-${index}`}>
-          <h2>{article.title}</h2>
+      <header className="header">
+        <div className="logo">
+          NEWS<span>FLOW</span>
+        </div>
 
-          {article.urlToImage && (
-            <img src={article.urlToImage} alt={article.title} width="300" />
-          )}
+        <nav>
+          <a href="#">Home</a>
+          <a href="#">World</a>
+          <a href="#">Africa</a>
+          <a href="#">Technology</a>
+          <a href="#">Climate</a>
+        </nav>
 
-          <p>{article.description}</p>
+        <button className="search-button">
+          🔍
+        </button>
+      </header>
 
-          <small>
-            {article.source.name} - {" "}
-            {new Date(article.publishedAt).toLocaleString()}
-          </small>
-        </article>
-      ))}
-    </main>
+      <main>
+
+        <section className="hero">
+          <div>
+            <span className="live-badge">
+              🔴 LIVE
+            </span>
+
+            <h1>
+              Stay informed.
+              <br />
+              Stay connected.
+            </h1>
+
+            <p>
+              Real-time news from around the world,
+              with Africa in focus.
+            </p>
+          </div>
+        </section>
+
+        <NewsGrid articles={articles} />
+
+      </main>
+
+    </div>
   );
 }
 

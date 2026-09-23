@@ -1,0 +1,28 @@
+import type { NewsArticle } from "../types/news";
+import NewsCard from "./NewsCard";
+
+interface NewsGridProps {
+  articles: NewsArticle[];
+}
+
+function NewsGrid({ articles }: NewsGridProps) {
+  return (
+    <section className="news-section">
+      <div className="section-heading">
+        <h2>Latest News</h2>
+        <span>{articles.length} stories</span>
+      </div>
+
+      <div className="news-grid">
+        {articles.map((article, index) => (
+          <NewsCard
+            key={`${article.url}-${index}`}
+            article={article}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export default NewsGrid;
